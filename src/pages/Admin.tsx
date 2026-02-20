@@ -4,6 +4,7 @@ import {
   Home, ShoppingBasket, Leaf, Settings, Bell, ChevronDown,
   ArrowUpRight, ArrowDownRight, Activity, Map,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -176,6 +177,9 @@ function Sidebar({ active, onNav }: { active: string; onNav: (id: string) => voi
 // ── Main Admin Page ────────────────────────────────────────
 const Admin = () => {
   const [activeNav, setActiveNav] = useState("dashboard");
+  const { user } = useAuth();
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+  const initials = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen flex" style={{ background: "hsl(var(--background))" }}>
@@ -225,9 +229,9 @@ const Admin = () => {
                 className="w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center"
                 style={{ background: "hsl(var(--farm-green) / 0.2)", color: "hsl(var(--farm-green))" }}
               >
-                A
+                {initials}
               </div>
-              <span className="text-xs text-foreground hidden sm:block">Admin</span>
+              <span className="text-xs text-foreground hidden sm:block truncate max-w-24">{displayName}</span>
               <ChevronDown size={12} className="text-foreground-muted" />
             </div>
           </div>
