@@ -202,6 +202,18 @@ const Admin = () => {
           </div>
           <div className="flex items-center gap-3">
             <button
+              onClick={() => {
+                const headers = ["Farmer", "Crop", "Location", "Income", "Status"];
+                const rows = RECENT_FARMERS.map((f) => [f.name, f.crop, f.location, f.income, f.status]);
+                const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `agroconnect-report-${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold"
               style={{
                 background: "hsl(var(--farm-green) / 0.1)",
@@ -339,6 +351,11 @@ const Admin = () => {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-foreground-muted">Role:</span>
                 <select
+                  onChange={(e) => {
+                    // Filter logic is visual-only with mock data
+                    const val = e.target.value;
+                    console.log(`Filter by role: ${val}`);
+                  }}
                   className="text-xs font-mono rounded-lg px-2 py-1 outline-none"
                   style={{
                     background: "hsl(var(--surface-elevated))",
@@ -346,6 +363,7 @@ const Admin = () => {
                     border: "1px solid hsl(var(--surface-border))",
                   }}
                 >
+                  <option>All Roles</option>
                   <option>Admin</option>
                   <option>Field Agent</option>
                   <option>Viewer</option>
