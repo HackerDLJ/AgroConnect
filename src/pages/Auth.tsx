@@ -23,6 +23,8 @@ export default function Auth() {
   const [success, setSuccess] = useState("");
   const [step, setStep] = useState(0); // onboarding progress step
 
+  const [fullName, setFullName] = useState("");
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -32,7 +34,10 @@ export default function Auth() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { full_name: fullName || email.split("@")[0] },
+          },
         });
         if (error) throw error;
         setSuccess("Check your email for a confirmation link!");
@@ -180,6 +185,19 @@ export default function Auth() {
         {/* Email auth */}
         {(mode === "login" || mode === "signup") && (
           <form onSubmit={handleEmailAuth} className="space-y-4">
+            {mode === "signup" && (
+              <div>
+                <label className="text-[10px] font-mono uppercase tracking-wider text-foreground-muted block mb-2">Full Name</label>
+                <input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Ravi Kumar"
+                  required
+                  className="w-full px-4 py-4 rounded-xl text-sm outline-none"
+                  style={{ background: "hsl(var(--surface-elevated))", border: "1px solid hsl(var(--surface-border))", color: "hsl(var(--foreground))" }}
+                />
+              </div>
+            )}
             <div>
               <label className="text-[10px] font-mono uppercase tracking-wider text-foreground-muted block mb-2">Email</label>
               <div className="relative">
