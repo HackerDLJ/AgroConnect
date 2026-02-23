@@ -52,7 +52,10 @@ export function useWeather(lat = 11.0168, lon = 76.9558) {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=precipitation_sum&forecast_days=3&timezone=Asia/Kolkata`;
+        // Round coordinates to ~1km precision to protect farmer location privacy
+        const roundedLat = Math.round(lat * 100) / 100;
+        const roundedLon = Math.round(lon * 100) / 100;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${roundedLat}&longitude=${roundedLon}&current_weather=true&daily=precipitation_sum&forecast_days=3&timezone=Asia/Kolkata`;
         const res = await fetch(url);
         if (!res.ok) throw new Error("Weather fetch failed");
         const data = await res.json();
