@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, ChevronLeft } from "lucide-react";
+import { Send, Bot, User } from "lucide-react";
 
 interface ChatMessage {
   id: number;
@@ -60,7 +60,6 @@ export function HelpdeskChat() {
     addMessage(msg, "user");
     setInput("");
 
-    // Simulate bot response
     setTimeout(() => {
       const response = BOT_RESPONSES[msg] || DEFAULT_RESPONSE;
       addMessage(response, "bot");
@@ -71,16 +70,13 @@ export function HelpdeskChat() {
     <div className="flex flex-col h-[calc(100vh-180px)]">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ background: "hsl(var(--farm-green) / 0.15)", border: "1px solid hsl(var(--farm-green) / 0.3)" }}
-        >
-          <Bot size={18} style={{ color: "hsl(var(--farm-green))" }} />
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-farm/15 border border-farm/30">
+          <Bot size={18} className="text-farm" />
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-semibold text-foreground">Help & Support</h2>
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: "hsl(var(--farm-green))" }} />
+            <span className="w-1.5 h-1.5 rounded-full bg-farm" />
             <p className="text-[10px] font-mono text-foreground-muted">Online — Instant replies</p>
           </div>
         </div>
@@ -92,31 +88,22 @@ export function HelpdeskChat() {
           <div key={msg.id} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} fade-in`}>
             <div className="flex items-end gap-2 max-w-[85%]">
               {msg.sender === "bot" && (
-                <div
-                  className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: "hsl(var(--farm-green) / 0.15)" }}
-                >
-                  <Bot size={12} style={{ color: "hsl(var(--farm-green))" }} />
+                <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 bg-farm/15">
+                  <Bot size={12} className="text-farm" />
                 </div>
               )}
               <div
-                className="px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line"
-                style={{
-                  background: msg.sender === "user" ? "hsl(var(--farm-green))" : "hsl(var(--surface-elevated))",
-                  color: msg.sender === "user" ? "hsl(var(--primary-foreground))" : "hsl(var(--foreground))",
-                  border: msg.sender === "bot" ? "1px solid hsl(var(--surface-border))" : "none",
-                  borderBottomRightRadius: msg.sender === "user" ? "4px" : undefined,
-                  borderBottomLeftRadius: msg.sender === "bot" ? "4px" : undefined,
-                }}
+                className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
+                  msg.sender === "user"
+                    ? "bg-farm text-primary-foreground rounded-br-sm"
+                    : "bg-surface-elevated text-foreground border border-surface-border rounded-bl-sm"
+                }`}
               >
                 {msg.text}
               </div>
               {msg.sender === "user" && (
-                <div
-                  className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: "hsl(var(--market-blue) / 0.15)" }}
-                >
-                  <User size={12} style={{ color: "hsl(var(--market-blue))" }} />
+                <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 bg-market/15">
+                  <User size={12} className="text-market" />
                 </div>
               )}
             </div>
@@ -130,12 +117,7 @@ export function HelpdeskChat() {
           <button
             key={qr}
             onClick={() => handleSend(qr)}
-            className="flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all"
-            style={{
-              background: "hsl(var(--surface-elevated))",
-              color: "hsl(var(--foreground))",
-              border: "1px solid hsl(var(--surface-border))",
-            }}
+            className="flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all bg-surface-elevated text-foreground border border-surface-border"
           >
             {qr}
           </button>
@@ -149,18 +131,12 @@ export function HelpdeskChat() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Type your message..."
-          className="flex-1 px-4 py-3.5 rounded-2xl text-sm outline-none"
-          style={{
-            background: "hsl(var(--surface-elevated))",
-            border: "1px solid hsl(var(--surface-border))",
-            color: "hsl(var(--foreground))",
-          }}
+          className="flex-1 px-4 py-3.5 rounded-2xl text-sm outline-none bg-surface-elevated border border-surface-border text-foreground"
         />
         <button
           onClick={() => handleSend()}
           disabled={!input.trim()}
-          className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all disabled:opacity-30"
-          style={{ background: "hsl(var(--farm-green))", color: "hsl(var(--primary-foreground))" }}
+          className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all disabled:opacity-30 bg-farm text-primary-foreground"
         >
           <Send size={16} />
         </button>
