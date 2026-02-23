@@ -57,16 +57,30 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Translate using Google Translate unofficial API (no key required for basic use)
   const translateText = useCallback(async (text: string): Promise<string> => {
     if (language === "en" || !text) return text;
-    
+
+    // Input validation: limit length and reject suspicious content
+    if (text.length > 5000) return text;
+
     const cacheKey = `${language}:${text}`;
     if (translationCache.has(cacheKey)) return translationCache.get(cacheKey)!;
 
+    // Cache size limit to prevent memory exhaustion
+    if (translationCache.size > 1000) {
+      const firstKey = translationCache.keys().next().value;
+      if (firstKey) translationCache.delete(firstKey);
+    }
+
     setIsTranslating(true);
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${language}&dt=t&q=${encodeURIComponent(text)}`;
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${encodeURIComponent(language)}&dt=t&q=${encodeURIComponent(text)}`;
       const res = await fetch(url);
+      if (!res.ok) return text;
       const data = await res.json();
-      const translated = data[0]?.map((d: [string]) => d[0]).join("") || text;
+      if (!Array.isArray(data?.[0])) return text;
+      const translated = data[0]
+        .filter((d: unknown): d is [string] => Array.isArray(d) && typeof d[0] === 'string')
+        .map((d: [string]) => d[0])
+        .join("") || text;
       translationCache.set(cacheKey, translated);
       return translated;
     } catch {
