@@ -35,9 +35,27 @@ serve(async (req) => {
     }
 
     const { imageUrl } = await req.json();
-    if (!imageUrl) {
-      return new Response(JSON.stringify({ error: "imageUrl required" }), {
+    if (!imageUrl || typeof imageUrl !== "string") {
+      return new Response(JSON.stringify({ error: "Valid imageUrl required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate imageUrl is from our Supabase storage bucket to prevent SSRF
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const expectedPrefix = `${supabaseUrl}/storage/v1/object/public/scan-images/`;
+    if (!imageUrl.startsWith(expectedPrefix)) {
+      return new Response(JSON.stringify({ error: "Image must be from scan-images bucket" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Verify the image belongs to the authenticated user (path: userId/filename)
+    const imagePath = imageUrl.replace(expectedPrefix, "");
+    const pathUserId = imagePath.split("/")[0];
+    if (pathUserId !== user.id) {
+      return new Response(JSON.stringify({ error: "Unauthorized: can only scan your own images" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
