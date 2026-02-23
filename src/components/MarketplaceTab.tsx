@@ -14,23 +14,33 @@ const MARKET_GROWTH = [
 ];
 
 function UPIPayButton({ listing }: { listing: MarketListing }) {
-  const amount = listing.price * parseInt(listing.qty);
-
-  const openUPI = () => {
-    // UPI deep-link: works with GPay, PhonePe, Paytm, BHIM
-    const upiId = "farmer@upi"; // In real app, fetch from listing owner profile
-    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(listing.farmer)}&am=${amount}&tn=${encodeURIComponent(`Payment for ${listing.qty} ${listing.crop}`)}&cu=INR`;
-    window.location.href = upiUrl;
-  };
+  const [showWarning, setShowWarning] = useState(false);
 
   return (
-    <button
-      onClick={openUPI}
-      className="flex-1 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5"
-      style={{ background: "hsl(var(--farm-green))", color: "hsl(var(--primary-foreground))" }}
-    >
-      <span>₹</span> Pay via UPI
-    </button>
+    <>
+      <button
+        onClick={() => setShowWarning(true)}
+        className="flex-1 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5"
+        style={{ background: "hsl(var(--farm-green) / 0.15)", color: "hsl(var(--farm-green))", border: "1px solid hsl(var(--farm-green) / 0.3)" }}
+      >
+        <span>₹</span> Pay via UPI
+      </button>
+      {showWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: "hsl(0 0% 0% / 0.7)" }}>
+          <div className="max-w-sm w-full p-5 rounded-2xl space-y-3" style={{ background: "hsl(var(--surface))", border: "1px solid hsl(var(--surface-border))" }}>
+            <p className="text-sm font-semibold text-foreground">⚠️ Payment Not Available</p>
+            <p className="text-xs text-foreground-muted">UPI payments require verified seller accounts. This feature is coming soon with verified merchant IDs to protect both buyers and sellers.</p>
+            <button
+              onClick={() => setShowWarning(false)}
+              className="w-full py-2.5 rounded-xl text-xs font-semibold"
+              style={{ background: "hsl(var(--surface-elevated))", color: "hsl(var(--foreground))", border: "1px solid hsl(var(--surface-border))" }}
+            >
+              OK, got it
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
