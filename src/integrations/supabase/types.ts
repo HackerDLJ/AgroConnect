@@ -140,6 +140,45 @@ export type Database = {
         }
         Relationships: []
       }
+      scan_images: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          disease_name: string | null
+          id: string
+          image_url: string
+          plant_species: string | null
+          prevention_steps: Json | null
+          severity: number | null
+          treatments: Json | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          disease_name?: string | null
+          id?: string
+          image_url: string
+          plant_species?: string | null
+          prevention_steps?: Json | null
+          severity?: number | null
+          treatments?: Json | null
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          disease_name?: string | null
+          id?: string
+          image_url?: string
+          plant_species?: string | null
+          prevention_steps?: Json | null
+          severity?: number | null
+          treatments?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
